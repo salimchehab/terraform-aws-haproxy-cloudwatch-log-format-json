@@ -1,0 +1,85 @@
+{
+    "backend": {
+        "name": "%b",
+        "concurrent_connections": %bc,
+        "source_ip": "%bi",
+        "source_port": %bp,
+        "queue": %bq
+    },
+    "bytes": {
+        "read": %B,
+        "uploaded": %U
+    },
+    "captured_headers": {
+        "request": "%hr",
+        "response": "%hs"
+    },
+    "client": {
+        "ip": "%ci",
+        "port": %cp
+    },
+    "cookie_captured": {
+        "request": "%CC",
+        "response": "%CS"
+    },
+    "datetime": {
+        "accept_date_milliseconds": %ms,
+        "GMT": "%T",
+        "local": "%Tl",
+        "millisecond_resolution": "%t",
+        "GMT_start_of_HTTP_request": "%trg",
+        "local_start_of_HTTP_request": "%trl",
+        "timestamp": %Ts
+    },
+    "frontend": {
+        "name": "%f",
+        "concurrent_connections": %fc,
+        "ip": "%fi",
+        "port": %fp,
+        "name_transport": "%ft",
+        "log_counter": %lc
+    },
+    "hostname": "%H",
+    "http": {
+        "method": "%HM",
+        "request_uri_without_query_string": "%HP",
+        "request_uri_query_string": "%HQ",
+        "request_uri": "%HU",
+        "version": "%HV",
+        "unique_ID": "%ID",
+        "status_code": %ST,
+        "request": "%r"
+    },
+    "number_of_retries": %rc,
+    "pid": %pid,
+    "process_concurrent_connections": %ac,
+    "request_counter":  %rt,
+    "server": {
+        "name": "%s",
+        "concurrent_connections": %sc,
+        "ip": "%si",
+        "port": %sp,
+        "queue": %sq
+    },
+    "ssl": {
+        "cipher_used": "%sslc",
+        "version": "%sslv"
+    },
+    "termination": {
+        "state": "%ts",
+        "state_with_cookie_status": "%tsc"
+    },
+    "timers": {
+        "tr": "%tr",
+        "Ta": %Ta,
+        "Tc": %Tc,
+        "Td": %Td,
+        "Th": %Th,
+        "Ti": %Ti,
+        "Tq": %Tq,
+        "TR": %TR,
+        "Tr": %Tr,
+        "Tt": %Tt,
+        "Tw": %Tw
+    }
+}
