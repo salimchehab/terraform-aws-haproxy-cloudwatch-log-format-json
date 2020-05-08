@@ -219,6 +219,27 @@ Similarly, one can compose as many as needed such as:
 
 Etc.
 
+## Terraform Apply Outputs
+
+These are the metric filters that are implemented in this example:
+```text
+Outputs:
+
+http_method_metric_filters = [
+  "GET HTTP requests.",
+  "POST HTTP requests.",
+  "PUT HTTP requests.",
+  "DELETE HTTP requests.",
+]
+timers_metric_filters = [
+  "Total time to get client request.",
+  "Total time spent in queues waiting for a connection slot.",
+  "Total time to establish the TCP connection to the server.",
+  "Total active time for the HTTP request.",
+  "Total TCP session duration time (from proxy accept till both ends were closed).",
+]
+```
+
 ## CloudWatch Graphed Metrics
 
 - Stacked graph of GET and POST HTTP requests:
