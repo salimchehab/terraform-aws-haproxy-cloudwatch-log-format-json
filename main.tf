@@ -1,4 +1,70 @@
 # ----------------------------------------------------------------------------------------------------------------------
+# Create the local variables for the CloudWatch log metric filters
+# ----------------------------------------------------------------------------------------------------------------------
+locals {
+  log_metric_filters_default_value = "0"
+  log_metric_filters_namespace     = "LogMetrics"
+  log_metric_filters_timers = [
+    {
+      name : "Total time to get client request.",
+      pattern : "{$.timers.TR = *}",
+      name_short : "TR",
+      value : "$.timers.TR",
+    },
+    {
+      name : "Total time spent in queues waiting for a connection slot.",
+      pattern : "{$.timers.Tw = *}",
+      name_short : "Tw",
+      value : "$.timers.Tw",
+    },
+    {
+      name : "Total time to establish the TCP connection to the server.",
+      pattern : "{$.timers.Tc = *}",
+      name_short : "Tc",
+      value : "$.timers.Tc",
+    },
+    {
+      name : "Total active time for the HTTP request.",
+      pattern : "{$.timers.Ta = *}",
+      name_short : "Ta",
+      value : "$.timers.Ta",
+    },
+    {
+      name : "Total TCP session duration time (from proxy accept till both ends were closed).",
+      pattern : "{$.timers.Tt = *}",
+      name_short : "Tt",
+      value : "$.timers.Tt",
+    },
+  ]
+  log_metric_filters_http_method = [
+    {
+      name : "GET HTTP requests.",
+      pattern : "{$.http.method = GET}",
+      name_short : "GET",
+      value : "1",
+    },
+    {
+      name : "POST HTTP requests.",
+      pattern : "{$.http.method = POST}",
+      name_short : "POST",
+      value : "1",
+    },
+    {
+      name : "PUT HTTP requests.",
+      pattern : "{$.http.method = PUT}",
+      name_short : "PUT",
+      value : "1",
+    },
+    {
+      name : "DELETE HTTP requests.",
+      pattern : "{$.http.method = DELETE}",
+      name_short : "DELETE",
+      value : "1",
+    },
+  ]
+}
+
+# ----------------------------------------------------------------------------------------------------------------------
 # Generate HAProxy config from template cfg file
 # ----------------------------------------------------------------------------------------------------------------------
 data "template_file" "haproxy" {
@@ -40,89 +106,33 @@ resource "aws_cloudwatch_log_stream" "haproxy" {
 # ----------------------------------------------------------------------------------------------------------------------
 # Create CloudWatch Metric Filters for the HAProxy Timers
 # ----------------------------------------------------------------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "time_get_client_request" {
-  name           = "Total time to get client request."
-  pattern        = "{$.timers.TR = *}"
-  log_group_name = aws_cloudwatch_log_group.haproxy.name
-  metric_transformation {
-    name          = "TR"
-    namespace     = "LogMetrics"
-    value         = "$.timers.TR"
-    default_value = "0"
-  }
-}
+resource "aws_cloudwatch_log_metric_filter" "timers" {
+  count = length(local.log_metric_filters_timers)
 
-resource "aws_cloudwatch_log_metric_filter" "time_in_queues" {
-  name           = "Total time spent in queues waiting for a connection slot."
-  pattern        = "{$.timers.Tw = *}"
+  name           = local.log_metric_filters_timers[count.index].name
+  pattern        = local.log_metric_filters_timers[count.index].pattern
   log_group_name = aws_cloudwatch_log_group.haproxy.name
   metric_transformation {
-    name          = "Tw"
-    namespace     = "LogMetrics"
-    value         = "$.timers.Tw"
-    default_value = "0"
-  }
-}
-
-resource "aws_cloudwatch_log_metric_filter" "time_server_connection" {
-  name           = "Total time to establish the TCP connection to the server."
-  pattern        = "{$.timers.Tc = *}"
-  log_group_name = aws_cloudwatch_log_group.haproxy.name
-  metric_transformation {
-    name          = "Tc"
-    namespace     = "LogMetrics"
-    value         = "$.timers.Tc"
-    default_value = "0"
-  }
-}
-
-resource "aws_cloudwatch_log_metric_filter" "time_active_http_request" {
-  name           = "Total active time for the HTTP request."
-  pattern        = "{$.timers.Ta = *}"
-  log_group_name = aws_cloudwatch_log_group.haproxy.name
-  metric_transformation {
-    name          = "Ta"
-    namespace     = "LogMetrics"
-    value         = "$.timers.Ta"
-    default_value = "0"
-  }
-}
-
-resource "aws_cloudwatch_log_metric_filter" "time_tcp_session" {
-  name           = "Total TCP session duration time (from proxy accept till both ends were closed)."
-  pattern        = "{$.timers.Tt = *}"
-  log_group_name = aws_cloudwatch_log_group.haproxy.name
-  metric_transformation {
-    name          = "Tt"
-    namespace     = "LogMetrics"
-    value         = "$.timers.Tt"
-    default_value = "0"
+    name          = local.log_metric_filters_timers[count.index].name_short
+    namespace     = local.log_metric_filters_namespace
+    value         = local.log_metric_filters_timers[count.index].value
+    default_value = local.log_metric_filters_default_value
   }
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Create CloudWatch Metric Filters for the HTTP Requests
 # ----------------------------------------------------------------------------------------------------------------------
-resource "aws_cloudwatch_log_metric_filter" "http_method_get" {
-  name           = "GET HTTP requests."
-  pattern        = "{$.http.method = GET}"
-  log_group_name = aws_cloudwatch_log_group.haproxy.name
-  metric_transformation {
-    name          = "GET"
-    namespace     = "LogMetrics"
-    value         = "1"
-    default_value = "0"
-  }
-}
+resource "aws_cloudwatch_log_metric_filter" "http_method" {
+  count = length(local.log_metric_filters_http_method)
 
-resource "aws_cloudwatch_log_metric_filter" "http_method_post" {
-  name           = "POST HTTP requests."
-  pattern        = "{$.http.method = POST}"
+  name           = local.log_metric_filters_http_method[count.index].name
+  pattern        = local.log_metric_filters_http_method[count.index].pattern
   log_group_name = aws_cloudwatch_log_group.haproxy.name
   metric_transformation {
-    name          = "POST"
-    namespace     = "LogMetrics"
-    value         = "1"
-    default_value = "0"
+    name          = local.log_metric_filters_http_method[count.index].name_short
+    namespace     = local.log_metric_filters_namespace
+    value         = local.log_metric_filters_http_method[count.index].value
+    default_value = local.log_metric_filters_default_value
   }
 }
