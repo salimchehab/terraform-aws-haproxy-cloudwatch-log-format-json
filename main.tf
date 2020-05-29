@@ -62,6 +62,28 @@ locals {
       value : "1",
     },
   ]
+  dashboard_values = {
+    metrics = [
+      {
+        x_value   = 0,
+        y_value   = 0,
+        name      = "GET",
+        namespace = local.log_metric_filters_namespace
+      },
+      {
+        x_value   = 6,
+        y_value   = 0,
+        name      = "POST",
+        namespace = local.log_metric_filters_namespace
+      },
+      {
+        x_value   = 12,
+        y_value   = 0,
+        name      = "DELETE",
+        namespace = local.log_metric_filters_namespace
+      }
+    ]
+  }
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -135,4 +157,12 @@ resource "aws_cloudwatch_log_metric_filter" "http_method" {
     value         = local.log_metric_filters_http_method[count.index].value
     default_value = local.log_metric_filters_default_value
   }
+}
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Create CloudWatch Dashboard for the HTTP Requests
+# ----------------------------------------------------------------------------------------------------------------------
+resource "aws_cloudwatch_dashboard" "http_method" {
+  dashboard_name = "HTTP_METHODS_PER_MINUTE"
+  dashboard_body = templatefile("${path.module}/templates/dashboard.tpl", local.dashboard_values)
 }
